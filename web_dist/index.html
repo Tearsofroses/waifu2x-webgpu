@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Waifu2x Browser Edition</title>
+    <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+    <h1>Waifu2x <span style="font-size: 0.5em; color: #666">CLIENT SIDE</span></h1>
+    
+    <div class="controls">
+        <div>
+            <label>NOISE REDUCTION</label>
+            <select id="noiseLevel">
+                <option value="high">High (Robust Model)</option>
+                <option value="none">None (Standard Model)</option>
+            </select>
+        </div>
+
+        <div>
+            <label>UPSCALE RATIO</label>
+            <select id="scaleFactor">
+                <option value="2">2x (HD)</option>
+                <option value="4">4x (4K - Slow)</option>
+            </select>
+        </div>
+
+        <input type="file" id="fileInput" accept="image/*" style="display:none">
+        <button class="primary" onclick="document.getElementById('fileInput').click()">1. Select Image</button>
+        <button class="primary" id="runBtn" onclick="startProcessing()" disabled>2. Start Upscaling</button>
+    </div>
+
+    <div class="status" id="statusText">Load an image to begin.</div>
+
+    <img id="inputPreview" style="display: none;"> 
+
+    <div class="compare-container" id="compareContainer" style="display: none;">
+        <img id="compResult" class="compare-img">
+        
+        <img id="compOriginal" class="compare-img img-modified">
+        
+        <div class="slider-handle" id="sliderHandle">
+            <div class="slider-button"></div>
+        </div>
+    </div>
+    
+    <canvas id="outputCanvas" style="display: none;"></canvas>
+
+    <a id="downloadLink" style="display:none; color: #00d2ff; margin-top: 20px; cursor:pointer;" onclick="downloadImage()">Download Full Size</a>
+</div>
+
+<script src="main.js"></script>
+</body>
+</html>

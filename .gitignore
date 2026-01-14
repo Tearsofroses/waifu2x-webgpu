@@ -1,0 +1,37 @@
+# --- Python Basics ---
+__pycache__/
+*.py[cod]
+venv/
+.env
+
+# --- Data & Heavy Weights ---
+data/
+checkpoints*/
+*.pth
+*.onnx
+
+# --- Logs & Artifacts (Clean up your clutter) ---
+*.csv
+*.log
+runs/
+/log
+
+# --- Random Test Images ---
+# We ignore ALL images in the root...
+*.png
+*.jpg
+*.jpeg
+# ...but we ALLOW images inside the assets/ folder for the README
+!assets/*.png
+!assets/*.jpg
+
+# --- OS Junk ---
+.DS_Store
+Thumbs.db
+
+# --- IDE Settings ---
+.vscode/
+.idea/
+
+# --- Legacy Files ---
+legacy/
