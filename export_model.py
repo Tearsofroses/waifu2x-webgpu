@@ -50,11 +50,9 @@ def export_single_model(job):
     model.load_state_dict(state_dict, strict=False)
     model.eval()
 
-    model.half()
-
     # 3. Create Dummy Input
     # Shape: (Batch=1, Channels=3, Height=256, Width=256)
-    dummy_input = torch.randn(1, 3, 256, 256, device=DEVICE).half()
+    dummy_input = torch.randn(1, 3, 256, 256, device=DEVICE)
 
     # 4. Export to ONNX (Initial Pass)
     print(f"Exporting raw ONNX...")
