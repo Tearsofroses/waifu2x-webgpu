@@ -3,6 +3,7 @@ import torch.onnx
 import os
 import onnx  # Required for the single-file fix
 from src.rrdbnet import RRDBNet
+from src.model import SRResNet
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -43,7 +44,8 @@ def export_single_model(job):
 
     # 1. Initialize Model
     print(f"Loading weights from {pth_path}...")
-    model = RRDBNet(in_nc=3, out_nc=3, nf=64, nb=6).to(DEVICE)
+    # model = RRDBNet(in_nc=3, out_nc=3, nf=64, nb=6).to(DEVICE)
+    model = SRResNet(scale_factor=2, num_res_blocks=32).to(DEVICE)
     
     # 2. Load Weights
     state_dict = torch.load(pth_path, map_location=DEVICE)
