@@ -92,7 +92,12 @@ async function startProcessing() {
     try {
         const targetPath = MODELS[noiseLevel];
         if (currentModelPath !== targetPath) {
-            updateStatus(`Loading Model (${noiseLevel})...`);
+            // Make the message explicit so they don't think it crashed
+            updateStatus(`Compiling WebGPU Shaders... (This takes 10s on first run)`);
+            
+            // Allow the UI to update before the heavy freeze starts
+            await new Promise(r => setTimeout(r, 50)); 
+
             currentSession = await ort.InferenceSession.create(targetPath, {
                 executionProviders: ['webgpu', 'wasm']
             });
@@ -194,11 +199,18 @@ function initSlider() {
 async function processTiled(sourceImage, scale, targetCanvas = null) {
     const outCanvas = targetCanvas || document.getElementById('outputCanvas');
     const ctx = outCanvas.getContext('2d');
+
+    // Show Progress Bar
+    const progressContainer = document.getElementById('progressContainer');
+    const progressBar = document.getElementById('progressBar');
+    progressContainer.style.display = 'block';
+    progressBar.style.width = '0%';
+
     const outWidth = sourceImage.width * scale;
     const outHeight = sourceImage.height * scale;
     outCanvas.width = outWidth;
     outCanvas.height = outHeight;
-    
+
     const step = TILE_SIZE - (2 * PADDING);
     const xSteps = Math.ceil(sourceImage.width / step);
     const ySteps = Math.ceil(sourceImage.height / step);
@@ -212,34 +224,50 @@ async function processTiled(sourceImage, scale, targetCanvas = null) {
 
     for (let y = 0; y < sourceImage.height; y += step) {
         for (let x = 0; x < sourceImage.width; x += step) {
-            updateStatus(`Processing Tile ${processedTiles + 1}/${totalTiles} (Tier: ${hardwareTier})...`);
             
+            // --- UPDATE PROGRESS BAR ---
+            const percent = Math.round((processedTiles / totalTiles) * 100);
+            progressBar.style.width = `${percent}%`;
+            updateStatus(`Upscaling... ${percent}% (Tile ${processedTiles + 1}/${totalTiles})`);
+
+            // 1. Crop
             let srcX = x - PADDING;
             let srcY = y - PADDING;
-            
             tempCtx.clearRect(0, 0, TILE_SIZE, TILE_SIZE);
             tempCtx.drawImage(sourceImage, srcX, srcY, TILE_SIZE, TILE_SIZE, 0, 0, TILE_SIZE, TILE_SIZE);
 
+            // 2. Inference
             const tileTensor = await imageToTensor(tempCanvas);
+            
             try {
                 const feeds = { input: tileTensor };
                 const results = await currentSession.run(feeds);
                 const outputTensor = results.output;
 
+                // 3. Stitch
                 const outStep = step * scale;
                 const outPadding = PADDING * scale;
                 const destX = (x < PADDING) ? 0 : (x * scale); 
                 const destY = (y < PADDING) ? 0 : (y * scale);
                 
                 drawTensorRegionToCanvas(outputTensor, ctx, destX, destY, outPadding, outPadding, outStep, outStep, outWidth, outHeight);
+
             } catch (err) {
-                console.error("Tile Inference Failed:", err);
-                throw new Error("GPU crashed on a tile. Try reloading.");
+                console.error(err);
+                throw new Error("GPU error. Try reloading page.");
             }
+
             processedTiles++;
-            await new Promise(r => setTimeout(r, 10));
+            // Small delay to allow UI to redraw the progress bar
+            await new Promise(r => setTimeout(r, 0));
         }
     }
+    
+    // Hide Bar when done
+    progressBar.style.width = '100%';
+    setTimeout(() => {
+        progressContainer.style.display = 'none';
+    }, 500);
 }
 
 async function imageToTensor(canvas) {
