@@ -13,6 +13,8 @@ from src.model import SRResNet
 from src.dataset import AnimeDataset
 from src.loss import TotalLoss # Using the new loss we made
 
+load_dotenv()
+
 # --- CONFIGURATION ---
 BATCH_SIZE = int(os.getenv("BATCH_SIZE", 8)) # GANs often need smaller batch sizes
 LR = float(os.getenv("LEARNING_RATE", 1e-5))

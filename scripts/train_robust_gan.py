@@ -9,13 +9,16 @@ from src.model import SRResNet
 from src.discriminator import Discriminator
 from src.dataset import AnimeDataset
 from src.loss import PerceptualLoss
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # --- CONFIG ---
 BATCH_SIZE = 4            
 LR = 1e-5
 EPOCHS = 20          
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
-DATA_PATH = r"D:\Projects\Waifu2xclone\data\anime_hq\images" 
+DATA_PATH = os.getenv("TRAIN_DATA_PATH", "./data/high_res_anime")  # Path to high-res images
 
 # --- RESUME SETTINGS ---
 RESUME_EPOCH = 0
