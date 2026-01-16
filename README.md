@@ -23,7 +23,7 @@ Unlike traditional web upscalers that upload images to a cloud server (incurring
 
 ## Tech Stack
 
-* **Training:** PyTorch, (SSRNet), Real-ESRGAN (RRDBNet), Perceptual Loss (VGG19), GANs.
+* **Training:** PyTorch, Super-Resolution ResNet (SSRNet), Real-ESRGAN (RRDBNet), Perceptual Loss (VGG19), GANs.
 * **Inference:** ONNX Runtime Web (WASM + WebGPU).
 * **Frontend:** Vanilla JavaScript (ES6+), HTML5, CSS3.
 * **DevOps:** GitHub Actions, GitHub Pages (CI/CD).
@@ -40,8 +40,8 @@ Unlike traditional web upscalers that upload images to a cloud server (incurring
 ### 2. Installation
 Clone the repository and install Python dependencies:
 ```bash
-git clone [https://github.com/YourUsername/Waifu2x-WebGPU.git](https://github.com/YourUsername/Waifu2x-WebGPU.git)
-cd Waifu2x-WebGPU
+git clone [https://github.com/Tearsofroses/waifu2x-webgpu.git](https://github.com/Tearsofroses/waifu2x-webgpu.git)
+cd waifu2x-webgpu
 pip install -r requirements.txt
 ```
 
